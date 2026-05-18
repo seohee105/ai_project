@@ -13,8 +13,8 @@ class Trade(Base):
     __tablename__ = "trades"
 
     id           = Column(String, primary_key=True)
-    buyer_id     = Column(String, ForeignKey("users.id"), nullable=False)
-    seller_id    = Column(String, ForeignKey("users.id"), nullable=False)
+    buyer_id     = Column(String, nullable=False)
+    seller_id    = Column(String, nullable=False)
     status       = Column(SAEnum(TradeStatus), default=TradeStatus.PENDING)
     created_at   = Column(DateTime, server_default=func.now())
     completed_at = Column(DateTime, nullable=True)
