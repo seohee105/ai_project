@@ -115,7 +115,11 @@ class BleEngine(private val context: Context) {
 
     private fun calculateDistance(rssi: Double, txPower: Int): Double {
         if (rssi == 0.0) return -1.0
-        val ratio = rssi / txPower
+
+        // txPower가 비정상적인 값이면 기본값 사용
+        val calibratedTxPower = if (txPower < -100 || txPower > 0) -59 else txPower
+
+        val ratio = rssi / calibratedTxPower
         return if (ratio < 1.0) {
             Math.pow(ratio, 10.0)
         } else {
