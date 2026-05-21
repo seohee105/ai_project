@@ -1,36 +1,76 @@
 package com.yourteam.daangnalarm
 
-import android.location.Location
+import android.os.Bundle
+import android.widget.Toast
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import android.content.pm.PackageManager
 
-class MainActivity {
+class MainActivity : AppCompatActivity() {
 
-    // 두 좌표 사이 거리 계산 (미터 단위)
-    fun calculateDistance(
-        lat1: Double, lon1: Double,
-        lat2: Double, lon2: Double
-    ): Double {
-        val results = FloatArray(1)
-        Location.distanceBetween(lat1, lon1, lat2, lon2, results)
-        return results[0].toDouble()
-    }
+    private lateinit var bleEngine: BleEngine
+    private lateinit var webSocketManager:WebSocketManager
+    private lateinit var tvDistance: TextView
 
-    // 1m 이내면 랜덤 컬러 반환, 아니면 null
-    fun assignColor(distance: Double): String? {
-        return if (distance <= 1.0) {
-            val colors = listOf("#FFD700", "#FF6B6B", "#00CED1", "#98FB98")
-            colors.random()
-        } else null
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    // RSSI 값으로 거리 계산 (블루투스용)
-    fun calculateBleDistance(rssi: Int): Double {
-        val txPower = -59 // 블루투스 기본 신호 세기
-        if (rssi == 0) return -1.0
-        val ratio = rssi * 1.0 / txPower
-        return if (ratio < 1.0) {
-            Math.pow(ratio, 10.0)
-        } else {
-            0.89976 * Math.pow(ratio, 7.7095) + 0.111
+        tvDistance = TextView(this).apply {
+            text = "거리: 측정 중..."
+            textSize = 30f
         }
+        setContentView(tvDistance)
+
+        requestBluetoothPermissions()
+    }
+
+    private fun requestBluetoothPermissions() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                android.Manifest.permission.BLUETOOTH_SCAN,
+                android.Manifest.permission.BLUETOOTH_ADVERTISE,
+                android.Manifest.permission.BLUETOOTH_CONNECT,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+            1
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+            startBle()
+        } else {
+            Toast.makeText(this, "블루투스 권한이 필요합니다", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun startBle() {
+        bleEngine = BleEngine(this)
+
+        // 웹소켓 연결 ← 추가
+        webSocketManager = WebSocketManager()
+        webSocketManager.connect()
+        bleEngine.webSocketManager = webSocketManager
+        bleEngine.onDistanceUpdated = { distance, _ ->
+            runOnUiThread {
+                tvDistance.text = "거리: ${String.format("%.2f", distance)}m"
+            }
+        }
+
+        bleEngine.startScan()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::bleEngine.isInitialized) {
+            bleEngine.stopScan()
+            bleEngine.stopAdvertise()
+        }
+        webSocketManager.disconnect()
     }
 }
