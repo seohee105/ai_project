@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <com.yourteam.newdang.SilhouetteView
+        android:id="@+id/silhouetteView"
+        android:layout_width="160dp"
+        android:layout_height="240dp"
+        android:layout_gravity="center_horizontal"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="매칭 컬러"
+            android:layout_marginEnd="8dp"/>
+
+        <View
+            android:id="@+id/matchColorBadge"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/circle_badge"/>
+
+        <TextView
+            android:id="@+id/matchColorName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="파랑"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/partTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/colorGrid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"/><TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="상의"
+    android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/summaryTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="하의"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/summaryBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="머리"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/summaryHair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"/>
+
+    <Button
+        android:id="@+id/confirmBtn"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="20dp"
+        android:text="설정 완료"/>
+
+</LinearLayout>
